@@ -963,6 +963,7 @@
         "source": "local-source-build",
         "size": 69649720,
         "localPath": ".cache/apks/черкасов-кирилл-константинович-built-release.apk",
+        "artifactUrl": "https://github.com/huilo1/vibecontest-dashboard/releases/download/local-apk-builds-2026-04-27/chirkasov-kirill-built-release.apk",
         "hasManifest": true,
         "buildType": "Expo/React Native release APK signed with debug keystore",
         "note": "Участник APK не предоставил: проект зависит от dev-сервисов и VK token. Для ревью APK собран локально из исходников в mock-режиме."
@@ -2028,6 +2029,7 @@
         "source": "local-source-build",
         "size": 158129755,
         "localPath": ".cache/apks/харин-иван-александрович-built-debug.apk",
+        "artifactUrl": "https://github.com/huilo1/vibecontest-dashboard/releases/download/local-apk-builds-2026-04-27/kharin-ivan-built-debug.apk",
         "hasManifest": true,
         "buildType": "Flutter debug APK after generating android/ with flutter create",
         "note": "Участник APK не приложил, но README описывает генерацию платформы. Для ревью Android-папка сгенерирована локально, APK собран с VIBE_API_BASE_URL=http://10.0.2.2:8080."

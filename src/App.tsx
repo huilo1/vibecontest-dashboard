@@ -24,6 +24,7 @@ type ApkInfo = {
   size?: number
   localPath?: string
   downloadUrl?: string
+  artifactUrl?: string
   note?: string
   hasManifest?: boolean
   nestedApks?: string[]
@@ -382,6 +383,12 @@ function SubmissionDetail({ row }: { row: { submission: Submission; evaluation: 
           <Smartphone size={16} />
           APK
         </a>
+        {submission.apk.artifactUrl ? (
+          <a href={submission.apk.artifactUrl} target="_blank" rel="noreferrer">
+            <PackageCheck size={16} />
+            Собранный APK
+          </a>
+        ) : null}
         <a href={submission.promptsUrl} target="_blank" rel="noreferrer">
           <FileText size={16} />
           Промпты

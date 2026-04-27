@@ -40,8 +40,8 @@ npm run apk:smoke -- .cache/apks/калинин-михаил-павлович.ap
 
 See `docs/apk-emulator.md` for emulator setup and `docs/apk-smoke-results.md` for current runtime evidence. Two originally missing APKs were built locally from source:
 
-- `.cache/apks/черкасов-кирилл-константинович-built-release.apk`
-- `.cache/apks/харин-иван-александрович-built-debug.apk`
+- Черкасов: <https://github.com/huilo1/vibecontest-dashboard/releases/download/local-apk-builds-2026-04-27/chirkasov-kirill-built-release.apk>
+- Харин: <https://github.com/huilo1/vibecontest-dashboard/releases/download/local-apk-builds-2026-04-27/kharin-ivan-built-debug.apk>
 
 ## Current preliminary winners
 

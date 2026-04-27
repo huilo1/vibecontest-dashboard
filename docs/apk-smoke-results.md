@@ -25,4 +25,5 @@ Scope: install APK, launch main activity, wait 20-35 seconds, capture screenshot
 - Инжутов's APK installs and starts `MainActivity`, but the UI does not progress past splash on the API 35 emulator. Because of this runtime result, the provisional top 3 was adjusted to Калинин, Меркурьев, Тоскин.
 - Черкасов's original submission did not include APK. A standalone Expo/React Native release APK was built locally from source in mock mode; the first debug APK was not standalone because it required Metro.
 - Харин's original submission did not include APK or Android platform folder. `flutter create --platforms=android .` plus `flutter build apk --debug --dart-define=VIBE_API_BASE_URL=http://10.0.2.2:8080` produced an installable APK.
+- Public download links for locally built APKs are published as GitHub Release assets: <https://github.com/huilo1/vibecontest-dashboard/releases/tag/local-apk-builds-2026-04-27>.
 - During the two new smoke runs the emulator showed a System UI ANR dialog after long installs, but both apps were visibly rendered behind the dialog and app logs did not show fatal crashes.
