@@ -31,18 +31,22 @@ The manual scoring matrix lives in `src/data/evaluations.ts`.
 
 ## APK checks
 
-This machine did not have Android SDK tools installed during implementation. The script is ready for a machine with `adb`:
+This machine has a local Android SDK and Docker/KVM emulator workflow:
 
 ```bash
+npm run apk:emulator:start
 npm run apk:smoke -- .cache/apks/калинин-михаил-павлович.apk
 ```
 
-See `docs/apk-emulator.md` for emulator setup and the manual review checklist.
+See `docs/apk-emulator.md` for emulator setup and `docs/apk-smoke-results.md` for current runtime evidence. Two originally missing APKs were built locally from source:
+
+- `.cache/apks/черкасов-кирилл-константинович-built-release.apk`
+- `.cache/apks/харин-иван-александрович-built-debug.apk`
 
 ## Current preliminary winners
 
 1. Калинин Михаил Павлович
 2. Меркурьев Ярослав Ван Хиеу
-3. Инжутов Дмитрий Сергеевич
+3. Тоскин Ярослав Николаевич
 
 Special engineering award: Черкасов Кирилл Константинович.

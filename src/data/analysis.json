@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-27T14:48:42.726Z",
+  "generatedAt": "2026-04-27T16:09:35.000Z",
   "source": {
     "sheet": "https://docs.google.com/spreadsheets/d/1_tPa-pdwsPMnMfQ85kkywOZWBOCyUyda8v8B4iJbhp0/edit?usp=sharing",
     "csv": "https://docs.google.com/spreadsheets/d/1_tPa-pdwsPMnMfQ85kkywOZWBOCyUyda8v8B4iJbhp0/gviz/tq?tqx=out:csv&gid=0"
@@ -959,8 +959,13 @@
         "excerptLength": 370
       },
       "apk": {
-        "status": "missing",
-        "note": "Не могу предоставить, так как проект в dev режиме зависит немного от локальных сервисов, а сервер я не арендовал. А также не хочу отдавать свой vk access токен."
+        "status": "built-local",
+        "source": "local-source-build",
+        "size": 69649720,
+        "localPath": ".cache/apks/черкасов-кирилл-константинович-built-release.apk",
+        "hasManifest": true,
+        "buildType": "Expo/React Native release APK signed with debug keystore",
+        "note": "Участник APK не предоставил: проект зависит от dev-сервисов и VK token. Для ревью APK собран локально из исходников в mock-режиме."
       }
     },
     {
@@ -2019,8 +2024,13 @@
         "excerptLength": 7468
       },
       "apk": {
-        "status": "missing",
-        "note": "Как собрать описано в README"
+        "status": "built-local",
+        "source": "local-source-build",
+        "size": 158129755,
+        "localPath": ".cache/apks/харин-иван-александрович-built-debug.apk",
+        "hasManifest": true,
+        "buildType": "Flutter debug APK after generating android/ with flutter create",
+        "note": "Участник APK не приложил, но README описывает генерацию платформы. Для ревью Android-папка сгенерирована локально, APK собран с VIBE_API_BASE_URL=http://10.0.2.2:8080."
       }
     }
   ]

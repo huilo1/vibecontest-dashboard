@@ -77,7 +77,7 @@ export const evaluations: Evaluation[] = [
   },
   {
     slug: 'инжутов-дмитрий-сергеевич',
-    rank: 9,
+    rank: 10,
     scores: { product: 24, prompts: 17, engineering: 18, delivery: 7 },
     summary:
       'Хорошо упакованный Flutter-проект по документам, но release APK на текущем эмуляторе не проходит runtime smoke: после 60 секунд остается splash screen.',
@@ -115,19 +115,20 @@ export const evaluations: Evaluation[] = [
     slug: 'черкасов-кирилл-константинович',
     rank: 4,
     award: 'Спецприз за инженерию',
-    scores: { product: 28, prompts: 19, engineering: 24, delivery: 8 },
+    scores: { product: 28, prompts: 19, engineering: 24, delivery: 10 },
     summary:
-      'Технически одна из лучших работ: Expo/React Native, TypeScript, прокси-сервисы, тесты, dev/prod документация. Общий рейтинг снижен из-за отсутствия APK и зависимости от локальных сервисов.',
+      'Технически одна из лучших работ: Expo/React Native, TypeScript, прокси-сервисы, тесты, dev/prod документация. APK не был приложен участником, но release APK удалось собрать локально из исходников и довести до экрана входа.',
     strengths: [
+      'Локально собранный release APK устанавливается и запускается автономно без Metro.',
       'Лучший набор тестов среди заявок: unit, smoke и integration.',
       'Хорошая dev/prod документация и прозрачное объяснение ограничений с VK token.',
       'Большая история промптов и использование нескольких моделей.',
     ],
     risks: [
-      'APK не предоставлен, полноценная проверка продукта требует Expo Go и локальных сервисов.',
-      'Есть runtime/proxy зависимость, которую нужно поднимать отдельно.',
+      'Участник не поставил готовый APK; debug APK из локальной сборки оказался не standalone и требовал Metro.',
+      'Часть сценариев всё равно зависит от локальных proxy/dev-сервисов и mock/real env-настроек.',
     ],
-    nextCheck: 'Запустить через Expo Go по DEVELOPMENT.md, затем прогнать npm test и ручной booking flow.',
+    nextCheck: 'Запустить локально собранный release APK, пройти mock-логин и отдельно поднять dev-services для booking/news/support flow.',
   },
   {
     slug: 'ломакин-максим-андреевич',
@@ -185,20 +186,22 @@ export const evaluations: Evaluation[] = [
   },
   {
     slug: 'харин-иван-александрович',
-    rank: 10,
-    scores: { product: 25, prompts: 16, engineering: 16, delivery: 9 },
+    rank: 9,
+    scores: { product: 25, prompts: 16, engineering: 17, delivery: 10 },
     summary:
-      'Интересная monorepo-идея Flutter + Rust BFF, но продукт заметно уходит в BlackBears STRIKE вместо прямого BBplay и не имеет готового APK.',
+      'Интересная monorepo-идея Flutter + Rust BFF. APK не был приложен, но README-сценарий воспроизводим: после генерации Android-платформы Flutter APK собирается и доходит до экрана входа.',
     strengths: [
+      'Локально собранный Flutter debug APK устанавливается и показывает auth UI с QA-аккаунтами.',
       'Есть README, Flutter client и Rust Axum BFF.',
       'Промпт формулирует сильную продуктовую концепцию tactical booking assistant.',
       'Архитектура выглядит самостоятельной, не только набором экранов.',
     ],
     risks: [
-      'APK не приложен, указан только путь сборки.',
+      'Android platform folder и APK не были поставлены участником, их пришлось генерировать локально.',
+      'Для проверки после логина нужно отдельно поднять Rust BFF; APK собран на адрес эмулятора `10.0.2.2:8080`.',
       'Смещение концепции от исходного BBplay может ухудшить соответствие ТЗ конкурса.',
     ],
-    nextCheck: 'Собрать по README и отдельно оценить, какие обязательные BBplay сценарии реально закрыты.',
+    nextCheck: 'Поднять Rust BFF, войти через QA-аккаунт и проверить, какие обязательные BBplay сценарии реально закрыты.',
   },
   {
     slug: 'глинкин-александр-михайлович',

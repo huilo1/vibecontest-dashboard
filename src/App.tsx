@@ -79,6 +79,7 @@ const formatBytes = (value?: number) => {
 const apkLabel = (apk: ApkInfo) => {
   if (apk.status === 'verified-apk') return 'APK проверен'
   if (apk.status === 'apk-archive') return 'архив с APK'
+  if (apk.status === 'built-local') return 'APK собран локально'
   if (apk.status === 'downloaded-not-apk') return 'не APK'
   if (apk.status === 'restricted') return 'закрытая ссылка'
   if (apk.status === 'missing') return 'APK не приложен'
@@ -88,12 +89,13 @@ const apkLabel = (apk: ApkInfo) => {
 
 const apkTone = (apk: ApkInfo) => {
   if (apk.status === 'verified-apk') return 'good'
+  if (apk.status === 'built-local') return 'good'
   if (apk.status === 'apk-archive') return 'warn'
   if (apk.status === 'missing' || apk.status === 'restricted' || apk.status === 'error') return 'bad'
   return 'warn'
 }
 
-const isInstallableApk = (apk: ApkInfo) => apk.status === 'verified-apk' || apk.status === 'apk-archive'
+const isInstallableApk = (apk: ApkInfo) => apk.status === 'verified-apk' || apk.status === 'apk-archive' || apk.status === 'built-local'
 
 const docStatus = (status: string) => (status === 'ok' || status === 'note' ? 'ok' : 'bad')
 
@@ -140,6 +142,7 @@ function App() {
   const selected = rows.find((row) => row.submission.slug === selectedSlug) ?? rows[0]
   const verifiedApks = rows.filter(({ submission }) => submission.apk.status === 'verified-apk').length
   const archiveApks = rows.filter(({ submission }) => submission.apk.status === 'apk-archive').length
+  const localApks = rows.filter(({ submission }) => submission.apk.status === 'built-local').length
   const installableApks = rows.filter(({ submission }) => isInstallableApk(submission.apk)).length
   const promptDocs = rows.filter(({ submission }) => docStatus(submission.promptDoc.status) === 'ok').length
   const averageScore = Math.round(rows.reduce((sum, row) => sum + totalScore(row.evaluation), 0) / rows.length)
@@ -170,7 +173,7 @@ function App() {
           icon={<Smartphone />}
           label="APK доступны"
           value={`${installableApks} из ${rows.length}`}
-          note={`${verifiedApks} прямых, ${archiveApks} архив`}
+          note={`${verifiedApks} прямых, ${archiveApks} архив, ${localApks} локально`}
         />
         <Metric icon={<FileText />} label="Промпты доступны" value={`${promptDocs} из ${rows.length}`} note="GitHub, Drive или inline note" />
         <Metric icon={<BarChart3 />} label="Средний балл" value={`${averageScore}`} note="по экспертной матрице" />

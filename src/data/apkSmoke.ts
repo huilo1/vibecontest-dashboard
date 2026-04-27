@@ -28,9 +28,9 @@ export const apkSmokeResults: ApkSmokeResult[] = [
   },
   {
     slug: 'черкасов-кирилл-константинович',
-    status: 'missing',
-    screen: 'APK не предоставлен участником.',
-    evidence: 'В таблице указано ограничение dev-сервисами и VK token.',
+    status: 'pass',
+    screen: 'Локально собранный release APK доходит до экрана входа; виден запрос notification permission.',
+    evidence: '.cache/emulator/черкасов-кирилл-константинович-built-release.ru.blackbearsplay.app.png',
   },
   {
     slug: 'ломакин-максим-андреевич',
@@ -64,9 +64,9 @@ export const apkSmokeResults: ApkSmokeResult[] = [
   },
   {
     slug: 'харин-иван-александрович',
-    status: 'missing',
-    screen: 'APK не предоставлен, указан путь сборки.',
-    evidence: 'В таблице: "Как собрать описано в README".',
+    status: 'pass',
+    screen: 'Локально собранный Flutter debug APK доходит до экрана входа с QA-аккаунтами.',
+    evidence: '.cache/emulator/харин-иван-александрович-built-debug.com.example.blackbears_strike.png',
   },
   {
     slug: 'жиронкин-василий-михайлович',
