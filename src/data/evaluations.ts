@@ -148,40 +148,42 @@ export const evaluations: Evaluation[] = [
   {
     slug: 'бирюков-владислав-сергеевич',
     rank: 7,
-    scores: { product: 28, prompts: 15, engineering: 17, delivery: 12 },
+    scores: { product: 28, prompts: 15, engineering: 17, delivery: 14 },
     summary:
-      'Гибридный PWA/Capacitor проект с собственным PHP API и MySQL-слоем. Сильная сторона - попытка полного backend/frontend контура, слабая - APK из Drive недоступен для автоустановки.',
+      'Гибридный PWA/Capacitor проект с собственным PHP API и MySQL-слоем. APK из Drive скачивается после подтверждения Google Drive warning и проходит ZIP-проверку.',
     strengths: [
+      'APK с Google Drive скачан через confirm-flow и проходит проверку.',
       'Есть архитектура PWA + Capacitor + PHP + MySQL.',
       'Документация и prompt log доступны через Drive.',
       'Виден значительный объём серверного и клиентского кода.',
     ],
     risks: [
-      'APK-ссылка закрыта или отдаёт HTML вместо APK.',
+      'APK около 4 MB, поэтому нужно вручную проверить, что это полноценная мобильная обёртка, а не только минимальный shell.',
       'Prompt history выглядит как набор коротких команд и логов, меньше проектного планирования.',
     ],
-    nextCheck: 'Попросить прямой APK или release asset, затем проверить авторизацию и backend-зависимости.',
+    nextCheck: 'Установить проверенный Drive APK, затем проверить авторизацию, backend-зависимости и сценарий бронирования.',
   },
   {
     slug: 'кулаков-вадим-евгеньевич',
     rank: 8,
-    scores: { product: 29, prompts: 17, engineering: 15, delivery: 8 },
+    scores: { product: 29, prompts: 17, engineering: 15, delivery: 13 },
     summary:
-      'Амбициозная Expo/React Native работа с бонусными сценариями и хорошим prompt-контекстом, но без репозиторной документации и с недоступным APK.',
+      'Амбициозная Expo/React Native работа с бонусными сценариями и хорошим prompt-контекстом. APK из Drive скачивается после подтверждения Google Drive warning и проходит ZIP-проверку.',
     strengths: [
+      'APK с Google Drive скачан через confirm-flow и проходит проверку.',
       'Промпты показывают передачу API-документации, тестовых аккаунтов и работу по логам.',
       'Заявлены колесо фортуны, активные брони, быстрые действия и отдельный backend.',
       'Стек Expo/TypeScript/React Navigation хорошо читается по коду.',
     ],
     risks: [
       'README/architecture файлы в репозитории не найдены, документы только через Drive.',
-      'APK-ссылка закрыта или отдаёт HTML.',
+      'Автоанализ не нашёл тесты.',
     ],
-    nextCheck: 'Получить открытый APK и перенести README/architecture/prompts в репозиторий.',
+    nextCheck: 'Установить проверенный Drive APK и перенести README/architecture/prompts в репозиторий для устойчивого ревью.',
   },
   {
     slug: 'харин-иван-александрович',
-    rank: 9,
+    rank: 10,
     scores: { product: 25, prompts: 16, engineering: 16, delivery: 9 },
     summary:
       'Интересная monorepo-идея Flutter + Rust BFF, но продукт заметно уходит в BlackBears STRIKE вместо прямого BBplay и не имеет готового APK.',
@@ -198,20 +200,21 @@ export const evaluations: Evaluation[] = [
   },
   {
     slug: 'глинкин-александр-михайлович',
-    rank: 10,
-    scores: { product: 26, prompts: 15, engineering: 13, delivery: 10 },
+    rank: 9,
+    scores: { product: 26, prompts: 15, engineering: 13, delivery: 13 },
     summary:
-      'Понятная Flutter-заявка с README, ARCHITECTURE и PROMPTS, но без проверяемого APK и без найденных тестов.',
+      'Понятная Flutter-заявка с README, ARCHITECTURE, PROMPTS и проверяемым APK из Google Drive.',
     strengths: [
+      'APK с Google Drive скачан через confirm-flow и проходит проверку.',
       'PROMPTS.md хорошо структурирует использованные AI-инструменты и этапы.',
       'ARCHITECTURE.md описывает Flutter/MVVM/Provider структуру.',
       'Кодовая база компактная и читаемая.',
     ],
     risks: [
-      'APK-ссылка закрыта или отдаёт HTML.',
-      'Меньше доказательств реальной готовности продукта, чем у заявок с APK.',
+      'Автоанализ не нашёл тесты.',
+      'Меньше доказательств продуктовой глубины, чем у лидеров.',
     ],
-    nextCheck: 'Получить прямой APK или собрать локально, затем проверить заявленные экраны.',
+    nextCheck: 'Установить проверенный Drive APK и пройти заявленные экраны на эмуляторе.',
   },
   {
     slug: 'жиронкин-василий-михайлович',

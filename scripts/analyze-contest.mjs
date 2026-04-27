@@ -73,7 +73,7 @@ const fetchText = async (url, timeoutMs = 20_000) => {
   }
 };
 
-const fetchBinary = async (url, target, timeoutMs = 45_000) => {
+const fetchBinary = async (url, target, timeoutMs = 180_000) => {
   try {
     const response = await fetch(url, {
       redirect: 'follow',
@@ -385,6 +385,37 @@ const githubApi = async (path) => {
 
 const rawGithubUrlFromBlob = (url) => parseGithubBlob(url)?.raw ?? null;
 
+const decodeHtmlAttribute = (value) =>
+  value
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+
+const extractInputValue = (html, name) => {
+  const input = html.match(new RegExp(`<input[^>]+name="${name}"[^>]*>`, 'i'))?.[0];
+  const value = input?.match(/value="([^"]*)"/i)?.[1];
+  return value ? decodeHtmlAttribute(value) : null;
+};
+
+const extractDriveConfirmUrl = (html, driveId) => {
+  const form = html.match(/<form[^>]+id="download-form"[^>]*>/i)?.[0] ?? '';
+  const action = form.match(/action="([^"]+)"/i)?.[1];
+  const confirm = extractInputValue(html, 'confirm');
+  const uuid = extractInputValue(html, 'uuid');
+  const id = extractInputValue(html, 'id') ?? driveId;
+
+  if (!action || !confirm || !uuid || !id) return null;
+
+  const url = new URL(decodeHtmlAttribute(action));
+  url.searchParams.set('id', id);
+  url.searchParams.set('export', 'download');
+  url.searchParams.set('confirm', confirm);
+  url.searchParams.set('uuid', uuid);
+  return url.toString();
+};
+
 const parseGitLfsPointer = (path) => {
   if (!existsSync(path)) return null;
   const content = readFileSync(path, 'utf8');
@@ -420,7 +451,7 @@ const resolveGitLfsObject = async (githubBlob, pointer) => {
   }
 };
 
-const verifyApkDownload = async ({ downloadUrl, target, source }) => {
+const verifyApkDownload = async ({ downloadUrl, target, source, driveId }) => {
   const result = await fetchBinary(downloadUrl, target);
   if (!result.ok) {
     return {
@@ -434,6 +465,22 @@ const verifyApkDownload = async ({ downloadUrl, target, source }) => {
     };
   }
   const isHtml = result.contentType.includes('text/html') || readFileSync(target).subarray(0, 64).toString('utf8').includes('<!DOCTYPE');
+  if (isHtml && source === 'google-drive' && driveId) {
+    const warningHtml = readFileSync(target, 'utf8');
+    const confirmUrl = extractDriveConfirmUrl(warningHtml, driveId);
+    if (confirmUrl) {
+      const confirmed = await verifyApkDownload({
+        downloadUrl: confirmUrl,
+        target,
+        source: 'google-drive-confirmed',
+      });
+      return {
+        ...confirmed,
+        source: 'google-drive',
+        confirmedDownload: true,
+      };
+    }
+  }
   if (!result.ok || isHtml || result.size < 100_000) {
     return {
       status: isHtml ? 'restricted' : 'error',
@@ -472,6 +519,7 @@ const resolveApk = async (submission, repoDir) => {
   const githubBlob = parseGithubBlob(url);
   let downloadUrl = githubBlob?.raw ?? null;
   let source = downloadUrl ? 'github-raw' : 'direct';
+  let driveId = null;
 
   const release = parseGithubRelease(url);
   if (release) {
@@ -510,8 +558,8 @@ const resolveApk = async (submission, repoDir) => {
   }
 
   if (!downloadUrl && parseDriveId(url)) {
-    const id = parseDriveId(url);
-    downloadUrl = `https://drive.google.com/uc?export=download&id=${id}`;
+    driveId = parseDriveId(url);
+    downloadUrl = `https://drive.google.com/uc?export=download&id=${driveId}`;
     source = 'google-drive';
   }
 
@@ -519,7 +567,7 @@ const resolveApk = async (submission, repoDir) => {
     return { status: 'unknown-link', source: 'unknown', downloadUrl: null, note: url };
   }
 
-  const verified = await verifyApkDownload({ downloadUrl, target, source });
+  const verified = await verifyApkDownload({ downloadUrl, target, source, driveId });
   const pointer = source === 'github-raw' ? parseGitLfsPointer(target) : null;
   if (pointer && githubBlob) {
     const lfsUrl = await resolveGitLfsObject(githubBlob, pointer);

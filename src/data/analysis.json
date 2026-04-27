@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-27T13:43:21.791Z",
+  "generatedAt": "2026-04-27T13:57:43.186Z",
   "source": {
     "sheet": "https://docs.google.com/spreadsheets/d/1_tPa-pdwsPMnMfQ85kkywOZWBOCyUyda8v8B4iJbhp0/edit?usp=sharing",
     "csv": "https://docs.google.com/spreadsheets/d/1_tPa-pdwsPMnMfQ85kkywOZWBOCyUyda8v8B4iJbhp0/gviz/tq?tqx=out:csv&gid=0"
@@ -184,12 +184,16 @@
         "excerptLength": 8208
       },
       "apk": {
-        "status": "restricted",
+        "status": "verified-apk",
         "source": "google-drive",
         "statusCode": 200,
-        "contentType": "text/html; charset=utf-8",
-        "size": 2422,
-        "downloadUrl": "https://drive.google.com/uc?export=download&id=1NGzPDeM1qHMmlE_cu8YgPlbVjS6WKEow"
+        "contentType": "application/octet-stream",
+        "size": 4490610,
+        "downloadUrl": "https://drive.usercontent.google.com/download?id=1NGzPDeM1qHMmlE_cu8YgPlbVjS6WKEow&export=download&confirm=t&uuid=54ea77a7-e6c4-4c17-b2af-ee91c6971f51",
+        "localPath": ".cache/apks/бирюков-владислав-сергеевич.apk",
+        "zipStatus": "ok",
+        "hasManifest": true,
+        "confirmedDownload": true
       }
     },
     {
@@ -329,12 +333,16 @@
         "excerptLength": 5732
       },
       "apk": {
-        "status": "restricted",
+        "status": "verified-apk",
         "source": "google-drive",
         "statusCode": 200,
-        "contentType": "text/html; charset=utf-8",
-        "size": 2522,
-        "downloadUrl": "https://drive.google.com/uc?export=download&id=1u3GSVF04kcIjXgGYAKk1IIpvdYggWdWj"
+        "contentType": "application/octet-stream",
+        "size": 67111554,
+        "downloadUrl": "https://drive.usercontent.google.com/download?id=1u3GSVF04kcIjXgGYAKk1IIpvdYggWdWj&export=download&confirm=t&uuid=509e442d-643a-4662-943d-d375d2110d40",
+        "localPath": ".cache/apks/глинкин-александр-михайлович.apk",
+        "zipStatus": "ok",
+        "hasManifest": true,
+        "confirmedDownload": true
       }
     },
     {
@@ -1097,12 +1105,16 @@
         "excerptLength": 9592
       },
       "apk": {
-        "status": "restricted",
+        "status": "verified-apk",
         "source": "google-drive",
         "statusCode": 200,
-        "contentType": "text/html; charset=utf-8",
-        "size": 2555,
-        "downloadUrl": "https://drive.google.com/uc?export=download&id=1pBDQ8gacnpuZqFJ74NNVUHqwlQV2nsYG"
+        "contentType": "application/octet-stream",
+        "size": 88932647,
+        "downloadUrl": "https://drive.usercontent.google.com/download?id=1pBDQ8gacnpuZqFJ74NNVUHqwlQV2nsYG&export=download&confirm=t&uuid=d412a98b-7e4d-4827-acb4-6ececc8b47a3",
+        "localPath": ".cache/apks/кулаков-вадим-евгеньевич.apk",
+        "zipStatus": "ok",
+        "hasManifest": true,
+        "confirmedDownload": true
       }
     },
     {
@@ -1817,7 +1829,7 @@
         "statusCode": 200,
         "contentType": "application/zip",
         "size": 148998293,
-        "downloadUrl": "https://github-cloud.githubusercontent.com/alambic/media/1086644801/83/47/8347cd6234a918f78d0c6747613c52e7995631a856a46328ce19eb7f611e0993?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260427%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260427T134256Z&X-Amz-Expires=3600&X-Amz-Signature=8bc1457a5e45e75a28300c6bed5249873d6c2850d23672cda136e0e06896104c&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=1215325844&token=1",
+        "downloadUrl": "https://github-cloud.githubusercontent.com/alambic/media/1086644801/83/47/8347cd6234a918f78d0c6747613c52e7995631a856a46328ce19eb7f611e0993?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5BA2674WPWWEFGQ5%2F20260427%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260427T135716Z&X-Amz-Expires=3600&X-Amz-Signature=3398601cc1f102b5750d3f210a89f165a8f33de87db2c960dd5533a429c4a5fc&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=1215325844&token=1",
         "localPath": ".cache/apks/калинин-михаил-павлович.apk",
         "zipStatus": "ok",
         "hasManifest": true,
