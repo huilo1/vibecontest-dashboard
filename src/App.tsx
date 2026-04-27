@@ -24,6 +24,8 @@ type ApkInfo = {
   localPath?: string
   downloadUrl?: string
   note?: string
+  hasManifest?: boolean
+  nestedApks?: string[]
 }
 
 type Submission = {
@@ -75,6 +77,8 @@ const formatBytes = (value?: number) => {
 
 const apkLabel = (apk: ApkInfo) => {
   if (apk.status === 'verified-apk') return 'APK проверен'
+  if (apk.status === 'apk-archive') return 'архив с APK'
+  if (apk.status === 'downloaded-not-apk') return 'не APK'
   if (apk.status === 'restricted') return 'закрытая ссылка'
   if (apk.status === 'missing') return 'APK не приложен'
   if (apk.status === 'error') return 'ошибка APK'
@@ -83,9 +87,12 @@ const apkLabel = (apk: ApkInfo) => {
 
 const apkTone = (apk: ApkInfo) => {
   if (apk.status === 'verified-apk') return 'good'
+  if (apk.status === 'apk-archive') return 'warn'
   if (apk.status === 'missing' || apk.status === 'restricted' || apk.status === 'error') return 'bad'
   return 'warn'
 }
+
+const isInstallableApk = (apk: ApkInfo) => apk.status === 'verified-apk' || apk.status === 'apk-archive'
 
 const docStatus = (status: string) => (status === 'ok' || status === 'note' ? 'ok' : 'bad')
 
@@ -109,13 +116,15 @@ function App() {
 
   const visibleRows = rows.filter(({ submission, evaluation }) => {
     if (filter === 'winners') return evaluation.rank <= 3 || Boolean(evaluation.award)
-    if (filter === 'apk') return submission.apk.status === 'verified-apk'
+    if (filter === 'apk') return isInstallableApk(submission.apk)
     if (filter === 'risk') return submission.apk.status !== 'verified-apk' || evaluation.scores.delivery < 11
     return true
   })
 
   const selected = rows.find((row) => row.submission.slug === selectedSlug) ?? rows[0]
   const verifiedApks = rows.filter(({ submission }) => submission.apk.status === 'verified-apk').length
+  const archiveApks = rows.filter(({ submission }) => submission.apk.status === 'apk-archive').length
+  const installableApks = rows.filter(({ submission }) => isInstallableApk(submission.apk)).length
   const promptDocs = rows.filter(({ submission }) => docStatus(submission.promptDoc.status) === 'ok').length
   const averageScore = Math.round(rows.reduce((sum, row) => sum + totalScore(row.evaluation), 0) / rows.length)
   const winnerRows = rows.filter(({ evaluation }) => evaluation.rank <= 3)
@@ -141,7 +150,12 @@ function App() {
 
       <section className="metric-grid" aria-label="Сводка">
         <Metric icon={<Trophy />} label="Лидер" value={compactName(winnerRows[0].submission.name)} note={`${totalScore(winnerRows[0].evaluation)} / 100`} />
-        <Metric icon={<Smartphone />} label="APK проверены" value={`${verifiedApks} из ${rows.length}`} note="ZIP-структура и AndroidManifest" />
+        <Metric
+          icon={<Smartphone />}
+          label="APK доступны"
+          value={`${installableApks} из ${rows.length}`}
+          note={`${verifiedApks} прямых, ${archiveApks} архив`}
+        />
         <Metric icon={<FileText />} label="Промпты доступны" value={`${promptDocs} из ${rows.length}`} note="GitHub, Drive или inline note" />
         <Metric icon={<BarChart3 />} label="Средний балл" value={`${averageScore}`} note="по экспертной матрице" />
       </section>
@@ -182,7 +196,7 @@ function App() {
         </button>
         <button className={filter === 'apk' ? 'active' : ''} onClick={() => setFilter('apk')} type="button">
           <PackageCheck size={17} />
-          APK ok
+          APK есть
         </button>
         <button className={filter === 'risk' ? 'active' : ''} onClick={() => setFilter('risk')} type="button">
           <AlertTriangle size={17} />
@@ -240,9 +254,9 @@ function App() {
           <div className="apk-workflow">
             <p>Автопроверка скачивает доступные APK в `.cache/apks`, включая GitHub Release, raw blob, Expo artifact, Google Drive и Git LFS.</p>
             <pre>
-              <code>{'npm run analyze\nnpm run apk:smoke -- .cache/apks/калинин-михаил-павлович.apk'}</code>
+              <code>{'npm run analyze\nnpm run apk:emulator:start\nnpm run apk:smoke -- .cache/apks/калинин-михаил-павлович.apk'}</code>
             </pre>
-            <p>На этой машине Android SDK не установлен, поэтому ручной запуск вынесен в `docs/apk-emulator.md` и shell-скрипт.</p>
+            <p>Локальный SDK установлен в `~/Android/Sdk`; запуск эмулятора и smoke-тест описаны в `docs/apk-emulator.md`.</p>
           </div>
         </article>
       </section>

@@ -3,6 +3,29 @@ set -euo pipefail
 
 APK_PATH="${1:-}"
 PACKAGE_NAME="${2:-}"
+SDK_DIR="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-$HOME/Android/Sdk}}"
+WORK_APK="$APK_PATH"
+TEMP_DIR=""
+
+cleanup() {
+  if [[ -n "$TEMP_DIR" && -d "$TEMP_DIR" ]]; then
+    rm -rf "$TEMP_DIR"
+  fi
+}
+trap cleanup EXIT
+
+if [[ -d "$SDK_DIR" ]]; then
+  export ANDROID_HOME="$SDK_DIR"
+  export ANDROID_SDK_ROOT="$SDK_DIR"
+  export PATH="$SDK_DIR/platform-tools:$SDK_DIR/emulator:$SDK_DIR/cmdline-tools/latest/bin:$PATH"
+
+  if [[ -d "$SDK_DIR/build-tools" ]]; then
+    LATEST_BUILD_TOOLS="$(find "$SDK_DIR/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
+    if [[ -n "$LATEST_BUILD_TOOLS" ]]; then
+      export PATH="$LATEST_BUILD_TOOLS:$PATH"
+    fi
+  fi
+fi
 
 if [[ -z "$APK_PATH" ]]; then
   echo "Usage: npm run apk:smoke -- <path-to-apk> [package.name]" >&2
@@ -28,11 +51,25 @@ if ! adb get-state >/dev/null 2>&1; then
   exit 1
 fi
 
-if [[ -z "$PACKAGE_NAME" ]]; then
+detect_package_name() {
   if command -v aapt >/dev/null 2>&1; then
-    PACKAGE_NAME="$(aapt dump badging "$APK_PATH" | sed -n \"s/package: name='\\([^']*\\)'.*/\\1/p\" | head -1)"
+    aapt dump badging "$1" 2>/dev/null | sed -n "s/package: name='\([^']*\)'.*/\1/p" | head -1 || true
   elif command -v apkanalyzer >/dev/null 2>&1; then
-    PACKAGE_NAME="$(apkanalyzer manifest application-id "$APK_PATH" | head -1)"
+    apkanalyzer manifest application-id "$1" 2>/dev/null | head -1 || true
+  fi
+}
+
+if [[ -z "$PACKAGE_NAME" ]]; then
+  PACKAGE_NAME="$(detect_package_name "$WORK_APK")"
+fi
+
+if [[ -z "$PACKAGE_NAME" ]] && command -v unzip >/dev/null 2>&1; then
+  NESTED_APK="$(unzip -Z1 "$APK_PATH" 2>/dev/null | grep -Ei '\.apk$' | head -1 || true)"
+  if [[ -n "$NESTED_APK" ]]; then
+    TEMP_DIR="$(mktemp -d)"
+    WORK_APK="$TEMP_DIR/$(basename "$NESTED_APK")"
+    unzip -p "$APK_PATH" "$NESTED_APK" > "$WORK_APK"
+    PACKAGE_NAME="$(detect_package_name "$WORK_APK")"
   fi
 fi
 
@@ -42,16 +79,18 @@ if [[ -z "$PACKAGE_NAME" ]]; then
 fi
 
 mkdir -p .cache/emulator
+ARTIFACT_NAME="$(basename "$APK_PATH")"
+ARTIFACT_NAME="${ARTIFACT_NAME%.*}"
 
-echo "Installing $APK_PATH"
-adb install -r "$APK_PATH"
+echo "Installing $WORK_APK"
+adb install -r "$WORK_APK"
 
 echo "Launching $PACKAGE_NAME"
 adb shell monkey -p "$PACKAGE_NAME" -c android.intent.category.LAUNCHER 1 >/dev/null
 
 sleep 8
-adb exec-out screencap -p > ".cache/emulator/${PACKAGE_NAME}.png"
-adb logcat -d -t 400 > ".cache/emulator/${PACKAGE_NAME}.log"
+adb exec-out screencap -p > ".cache/emulator/${ARTIFACT_NAME}.${PACKAGE_NAME}.png"
+adb logcat -d -t 400 > ".cache/emulator/${ARTIFACT_NAME}.${PACKAGE_NAME}.log"
 
-echo "Screenshot: .cache/emulator/${PACKAGE_NAME}.png"
-echo "Logcat: .cache/emulator/${PACKAGE_NAME}.log"
+echo "Screenshot: .cache/emulator/${ARTIFACT_NAME}.${PACKAGE_NAME}.png"
+echo "Logcat: .cache/emulator/${ARTIFACT_NAME}.${PACKAGE_NAME}.log"

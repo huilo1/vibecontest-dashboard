@@ -493,9 +493,20 @@ const verifyApkDownload = async ({ downloadUrl, target, source, driveId }) => {
   }
 
   const zip = safeExec('unzip', ['-t', target]);
-  const listing = safeExec('unzip', ['-l', target]);
+  const entryList = safeExec('unzip', ['-Z1', target]);
+  const entries = entryList.ok ? entryList.stdout.split(/\r?\n/).filter(Boolean) : [];
+  const hasManifest = entries.includes('AndroidManifest.xml');
+  const nestedApks = entries.filter((entry) => /\.apk$/i.test(entry));
+  const status = zip.ok
+    ? hasManifest
+      ? 'verified-apk'
+      : nestedApks.length
+        ? 'apk-archive'
+        : 'downloaded-not-apk'
+    : 'downloaded-not-verified';
+
   return {
-    status: zip.ok ? 'verified-apk' : 'downloaded-not-verified',
+    status,
     source,
     statusCode: result.status,
     contentType: result.contentType,
@@ -503,7 +514,8 @@ const verifyApkDownload = async ({ downloadUrl, target, source, driveId }) => {
     downloadUrl,
     localPath: relative(root, target),
     zipStatus: zip.ok ? 'ok' : zip.stderr,
-    hasManifest: listing.stdout.includes('AndroidManifest.xml'),
+    hasManifest,
+    nestedApks,
   };
 };
 

@@ -1,6 +1,15 @@
 # APK emulator checklist
 
-Local machine status during implementation: `adb`, `emulator` and `avdmanager` were not installed, so APKs were downloaded and ZIP-verified only.
+This repo supports a local smoke-test loop for downloaded contest APKs. The most reliable setup on the current host is Android SDK on the host plus a headless emulator inside Docker with `/dev/kvm` mounted into the container.
+
+Current machine setup:
+
+- JDK 17: `~/.local/jdks/temurin-17`
+- Android SDK: `~/Android/Sdk`
+- AVD name: `vibecontest-api35-kvm`
+- Docker image: `vibecontest/android-emulator:local`
+
+The host user is not in the `kvm` group, so running the emulator directly on the host falls back to software acceleration and is too slow. Docker works here because the container can receive `/dev/kvm` explicitly.
 
 ## Install Android tooling
 
@@ -19,12 +28,35 @@ sdkmanager "platform-tools" "emulator" "platforms;android-35" "system-images;and
 avdmanager create avd -n vibecontest-api35 -k "system-images;android-35;google_apis;x86_64" --device "pixel_6"
 ```
 
+The smoke script also uses `aapt` when it is available:
+
+```bash
+sdkmanager "build-tools;35.0.0"
+export PATH="$ANDROID_HOME/build-tools/35.0.0:$PATH"
+```
+
+## Start the Docker/KVM emulator
+
+```bash
+export JAVA_HOME="$HOME/.local/jdks/temurin-17"
+export ANDROID_HOME="$HOME/Android/Sdk"
+export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/35.0.0:$PATH"
+npm run apk:emulator:start
+```
+
+Use `npm run apk:emulator:start -- --build` after changing `scripts/apk/Dockerfile.emulator`.
+
+Stop it after review:
+
+```bash
+npm run apk:emulator:stop
+```
+
 ## Run a smoke test
 
 ```bash
 npm run analyze
-emulator -avd vibecontest-api35
-adb wait-for-device
+npm run apk:emulator:start
 npm run apk:smoke -- .cache/apks/калинин-михаил-павлович.apk
 ```
 
@@ -34,7 +66,13 @@ If package detection fails, pass the package name explicitly:
 npm run apk:smoke -- .cache/apks/инжутов-дмитрий-сергеевич.apk com.example.bbplay
 ```
 
-The script installs the APK, launches the main activity with `monkey`, waits 8 seconds, then saves a screenshot and the last 400 logcat lines to `.cache/emulator`.
+The script installs the APK, launches the main activity with `monkey`, waits 8 seconds, then saves a screenshot and the last 400 logcat lines to `.cache/emulator`. If the downloaded file is a ZIP archive with a single nested APK, the script extracts the nested APK to a temp directory and installs that.
+
+For apps that stop on runtime permissions, accept the permission in the emulator and capture one more screenshot:
+
+```bash
+adb exec-out screencap -p > .cache/emulator/manual-after-permission.png
+```
 
 ## Manual review path
 
