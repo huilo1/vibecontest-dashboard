@@ -6,6 +6,7 @@ PACKAGE_NAME="${2:-}"
 SDK_DIR="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-$HOME/Android/Sdk}}"
 WORK_APK="$APK_PATH"
 TEMP_DIR=""
+WAIT_SECONDS="${APK_SMOKE_WAIT_SECONDS:-8}"
 
 cleanup() {
   if [[ -n "$TEMP_DIR" && -d "$TEMP_DIR" ]]; then
@@ -86,9 +87,11 @@ echo "Installing $WORK_APK"
 adb install -r "$WORK_APK"
 
 echo "Launching $PACKAGE_NAME"
+adb shell am force-stop "$PACKAGE_NAME" >/dev/null 2>&1 || true
+adb logcat -c >/dev/null 2>&1 || true
 adb shell monkey -p "$PACKAGE_NAME" -c android.intent.category.LAUNCHER 1 >/dev/null
 
-sleep 8
+sleep "$WAIT_SECONDS"
 adb exec-out screencap -p > ".cache/emulator/${ARTIFACT_NAME}.${PACKAGE_NAME}.png"
 adb logcat -d -t 400 > ".cache/emulator/${ARTIFACT_NAME}.${PACKAGE_NAME}.log"
 

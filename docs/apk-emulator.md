@@ -68,6 +68,12 @@ npm run apk:smoke -- .cache/apks/инжутов-дмитрий-сергееви�
 
 The script installs the APK, launches the main activity with `monkey`, waits 8 seconds, then saves a screenshot and the last 400 logcat lines to `.cache/emulator`. If the downloaded file is a ZIP archive with a single nested APK, the script extracts the nested APK to a temp directory and installs that.
 
+Run every downloaded APK:
+
+```bash
+APK_SMOKE_WAIT_SECONDS=20 npm run apk:smoke:all
+```
+
 For apps that stop on runtime permissions, accept the permission in the emulator and capture one more screenshot:
 
 ```bash

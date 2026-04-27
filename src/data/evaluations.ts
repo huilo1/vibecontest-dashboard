@@ -77,25 +77,26 @@ export const evaluations: Evaluation[] = [
   },
   {
     slug: 'инжутов-дмитрий-сергеевич',
-    rank: 3,
-    award: 'Лучший сбалансированный релиз',
-    scores: { product: 34, prompts: 17, engineering: 18, delivery: 14 },
+    rank: 9,
+    scores: { product: 24, prompts: 17, engineering: 18, delivery: 7 },
     summary:
-      'Хорошо упакованный Flutter-релиз: есть GitHub Release с APK, презентация, README, понятная карта фич и нормальная история prompt-driven разработки.',
+      'Хорошо упакованный Flutter-проект по документам, но release APK на текущем эмуляторе не проходит runtime smoke: после 60 секунд остается splash screen.',
     strengths: [
-      'APK из GitHub Release скачан и проходит проверку.',
+      'APK из GitHub Release скачан, устанавливается и запускает main activity.',
       'Покрыты базовые сценарии: регистрация, баланс, бронирование, профиль, AI-чат, турниры и заказы еды по документации.',
       'PROMPTS.md показывает поэтапную генерацию и доработку.',
     ],
     risks: [
+      'Runtime smoke на Android API 35 не дошел до логина; logcat показывает Flutter/JNI ClassNotFoundException io/flutter/util/PathUtils.',
       'Тесты не обнаружены.',
-      'Инженерная структура выглядит проще, чем у двух лидеров.',
+      'До пересборки или проверки на другом устройстве нельзя подтвердить качество итогового продукта.',
     ],
-    nextCheck: 'Сверить заявленные фичи с реальным APK и проверить, не являются ли часть экранов mock-данными.',
+    nextCheck: 'Пересобрать APK или проверить на физическом устройстве/другой версии Android; затем повторить smoke до логина и core flow.',
   },
   {
     slug: 'тоскин-ярослав-николаевич',
-    rank: 4,
+    rank: 3,
+    award: 'Третий приз после APK smoke',
     scores: { product: 34, prompts: 16, engineering: 18, delivery: 13 },
     summary:
       'Сильный Flutter-релиз с рабочим APK, дополнительными фичами и подробным описанием процесса, но без найденных тестов.',
@@ -112,9 +113,9 @@ export const evaluations: Evaluation[] = [
   },
   {
     slug: 'черкасов-кирилл-константинович',
-    rank: 5,
+    rank: 4,
     award: 'Спецприз за инженерию',
-    scores: { product: 29, prompts: 19, engineering: 24, delivery: 10 },
+    scores: { product: 28, prompts: 19, engineering: 24, delivery: 8 },
     summary:
       'Технически одна из лучших работ: Expo/React Native, TypeScript, прокси-сервисы, тесты, dev/prod документация. Общий рейтинг снижен из-за отсутствия APK и зависимости от локальных сервисов.',
     strengths: [
@@ -130,7 +131,7 @@ export const evaluations: Evaluation[] = [
   },
   {
     slug: 'ломакин-максим-андреевич',
-    rank: 6,
+    rank: 5,
     scores: { product: 32, prompts: 17, engineering: 17, delivery: 12 },
     summary:
       'Добротный Flutter-проект с доступным APK внутри Drive-архива, локальными prompt-файлами и архитектурным описанием. По глубине инженерии уступает лидерам.',
@@ -148,7 +149,7 @@ export const evaluations: Evaluation[] = [
   },
   {
     slug: 'бирюков-владислав-сергеевич',
-    rank: 7,
+    rank: 6,
     scores: { product: 28, prompts: 15, engineering: 17, delivery: 14 },
     summary:
       'Гибридный PWA/Capacitor проект с собственным PHP API и MySQL-слоем. APK из Drive скачивается после подтверждения Google Drive warning и проходит ZIP-проверку.',
@@ -166,7 +167,7 @@ export const evaluations: Evaluation[] = [
   },
   {
     slug: 'кулаков-вадим-евгеньевич',
-    rank: 8,
+    rank: 7,
     scores: { product: 29, prompts: 17, engineering: 15, delivery: 13 },
     summary:
       'Амбициозная Expo/React Native работа с бонусными сценариями и хорошим prompt-контекстом. APK из Drive скачивается после подтверждения Google Drive warning и проходит ZIP-проверку.',
@@ -201,7 +202,7 @@ export const evaluations: Evaluation[] = [
   },
   {
     slug: 'глинкин-александр-михайлович',
-    rank: 9,
+    rank: 8,
     scores: { product: 26, prompts: 15, engineering: 13, delivery: 13 },
     summary:
       'Понятная Flutter-заявка с README, ARCHITECTURE, PROMPTS и проверяемым APK из Google Drive.',

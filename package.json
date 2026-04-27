@@ -11,6 +11,7 @@
     "analyze": "node scripts/analyze-contest.mjs",
     "apk:emulator:start": "bash scripts/apk/start-emulator-docker.sh",
     "apk:emulator:stop": "bash scripts/apk/stop-emulator-docker.sh",
+    "apk:smoke:all": "bash scripts/apk/smoke-all.sh",
     "apk:smoke": "bash scripts/apk/smoke-emulator.sh"
   },
   "dependencies": {

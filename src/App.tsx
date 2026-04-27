@@ -14,6 +14,7 @@ import {
   Trophy,
 } from 'lucide-react'
 import analysis from './data/analysis.json'
+import { apkSmokeBySlug, type ApkSmokeResult } from './data/apkSmoke'
 import { evaluations, evaluationsBySlug, rubric, type Evaluation, type ScoreKey } from './data/evaluations'
 import './App.css'
 
@@ -95,6 +96,21 @@ const apkTone = (apk: ApkInfo) => {
 const isInstallableApk = (apk: ApkInfo) => apk.status === 'verified-apk' || apk.status === 'apk-archive'
 
 const docStatus = (status: string) => (status === 'ok' || status === 'note' ? 'ok' : 'bad')
+
+const smokeLabel = (smoke?: ApkSmokeResult) => {
+  if (!smoke) return 'не запускали'
+  if (smoke.status === 'pass') return 'runtime ok'
+  if (smoke.status === 'fail') return 'runtime fail'
+  if (smoke.status === 'missing') return 'нет APK'
+  return 'runtime риск'
+}
+
+const smokeTone = (smoke?: ApkSmokeResult) => {
+  if (!smoke) return 'warn'
+  if (smoke.status === 'pass') return 'good'
+  if (smoke.status === 'fail' || smoke.status === 'missing') return 'bad'
+  return 'warn'
+}
 
 const compactName = (name: string) => {
   const [lastName, firstName] = name.split(' ')
@@ -280,6 +296,7 @@ function Metric({ icon, label, value, note }: { icon: ReactNode; label: string; 
 function SubmissionDetail({ row }: { row: { submission: Submission; evaluation: Evaluation } }) {
   const { submission, evaluation } = row
   const score = totalScore(evaluation)
+  const smoke = apkSmokeBySlug[submission.slug]
 
   return (
     <article className="detail-panel">
@@ -313,6 +330,7 @@ function SubmissionDetail({ row }: { row: { submission: Submission; evaluation: 
 
       <div className="status-grid">
         <StatusPill tone={apkTone(submission.apk)} icon={<Smartphone size={16} />} label={apkLabel(submission.apk)} value={formatBytes(submission.apk.size)} />
+        <StatusPill tone={smokeTone(smoke)} icon={<Smartphone size={16} />} label="APK smoke" value={smokeLabel(smoke)} />
         <StatusPill
           tone={docStatus(submission.promptDoc.status)}
           icon={<FileText size={16} />}
@@ -342,6 +360,7 @@ function SubmissionDetail({ row }: { row: { submission: Submission; evaluation: 
         <div>
           <h3>Следующая проверка</h3>
           <p>{evaluation.nextCheck}</p>
+          {smoke ? <p className="smoke-note">Smoke: {smoke.screen}</p> : null}
         </div>
         <div className="repo-facts">
           <span>{submission.repo.frameworks.join(', ') || 'стек не определён автоматически'}</span>
