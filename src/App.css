@@ -50,7 +50,7 @@
 
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   border-bottom: 1px solid var(--line);
 }
 
@@ -288,6 +288,14 @@
   color: var(--muted);
 }
 
+.detail-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+  gap: 28px;
+  align-items: start;
+  margin-top: 28px;
+}
+
 .score-dial {
   display: grid;
   place-items: center;
@@ -312,7 +320,7 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
-  margin-top: 28px;
+  margin-top: 0;
 }
 
 .score-item {
@@ -453,6 +461,68 @@
   margin-top: 24px;
 }
 
+.screenshot-card {
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.screenshot-card.empty {
+  color: var(--muted);
+}
+
+.screenshot-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.screenshot-title svg {
+  color: var(--blue);
+}
+
+.phone-frame {
+  display: block;
+  aspect-ratio: 9 / 20;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: #0f1720;
+}
+
+.phone-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.screenshot-card figcaption,
+.screenshot-card p {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.screenshot-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .method-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -527,6 +597,7 @@ code {
   }
 
   .workbench,
+  .detail-body,
   .method-grid {
     grid-template-columns: 1fr;
   }

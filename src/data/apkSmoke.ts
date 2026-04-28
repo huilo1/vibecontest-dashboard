@@ -5,6 +5,7 @@ export type ApkSmokeResult = {
   status: ApkSmokeStatus
   screen: string
   evidence: string
+  screenshotUrl?: string
 }
 
 export const apkSmokeResults: ApkSmokeResult[] = [
@@ -13,72 +14,84 @@ export const apkSmokeResults: ApkSmokeResult[] = [
     status: 'pass',
     screen: 'Логин после выдачи location permission.',
     evidence: '.cache/emulator/калинин-михаил-павлович.com.bbplay.app.png',
+    screenshotUrl: 'screenshots/kalinin.png',
   },
   {
     slug: 'меркурьев-ярослав-ван-хиеу',
     status: 'pass',
     screen: 'Логин/основной shell с нижней навигацией.',
     evidence: '.cache/emulator/меркурьев-ярослав-ван-хиеу.com.blackbears.bbplay.png',
+    screenshotUrl: 'screenshots/merkurev.png',
   },
   {
     slug: 'тоскин-ярослав-николаевич',
     status: 'pass',
     screen: 'Логин с русской локализацией.',
     evidence: '.cache/emulator/тоскин-ярослав-николаевич.com.example.test1.png',
+    screenshotUrl: 'screenshots/toskin.png',
   },
   {
     slug: 'черкасов-кирилл-константинович',
     status: 'pass',
     screen: 'Локально собранный release APK доходит до экрана входа; виден запрос notification permission.',
     evidence: '.cache/emulator/черкасов-кирилл-константинович-built-release.ru.blackbearsplay.app.png',
+    screenshotUrl: 'screenshots/cherkasov.png',
   },
   {
     slug: 'ломакин-максим-андреевич',
     status: 'pass',
     screen: 'Логин; APK извлечен из вложенного BBPlay.apk внутри Drive-архива.',
     evidence: '.cache/emulator/ломакин-максим-андреевич.com.example.bbplay_app.png',
+    screenshotUrl: 'screenshots/lomakin.png',
   },
   {
     slug: 'бирюков-владислав-сергеевич',
     status: 'pass',
     screen: 'Логин после повторного ручного запуска; первый batch поймал системный ANR эмулятора.',
     evidence: '.cache/emulator/biryukov-manual-30s.png',
+    screenshotUrl: 'screenshots/biryukov.png',
   },
   {
     slug: 'кулаков-вадим-евгеньевич',
     status: 'pass',
     screen: 'Логин с русской локализацией.',
     evidence: '.cache/emulator/кулаков-вадим-евгеньевич.com.archvnx.bbplayapp.png',
+    screenshotUrl: 'screenshots/kulakov.png',
   },
   {
     slug: 'гуреев-егор-алексеевич',
     status: 'pass',
     screen: 'Логин и demo dashboard с балансом, клубами и нижней навигацией.',
     evidence: '.cache/emulator/gureev-demo-28s.png',
+    screenshotUrl: 'screenshots/gureev.png',
   },
   {
     slug: 'глинкин-александр-михайлович',
     status: 'pass',
     screen: 'Логин; на экране видны тестовые аккаунты.',
     evidence: '.cache/emulator/глинкин-александр-михайлович.com.example.bb_play.png',
+    screenshotUrl: 'screenshots/glinkin.png',
   },
   {
     slug: 'инжутов-дмитрий-сергеевич',
     status: 'fail',
     screen: 'После 60 секунд остается splash screen.',
     evidence: 'logcat: Flutter/JNI ClassNotFoundException io/flutter/util/PathUtils.',
+    screenshotUrl: 'screenshots/inzhutov.png',
   },
   {
     slug: 'харин-иван-александрович',
     status: 'pass',
     screen: 'Локально собранный Flutter debug APK доходит до экрана входа с QA-аккаунтами.',
     evidence: '.cache/emulator/харин-иван-александрович-built-debug.com.example.blackbears_strike.png',
+    screenshotUrl: 'screenshots/kharin.png',
   },
   {
     slug: 'жиронкин-василий-михайлович',
     status: 'pass',
     screen: 'Логин/авторизация, форма открывается после запуска.',
     evidence: '.cache/emulator/жиронкин-василий-михайлович.com.vasilizxt.bbplayreact.png',
+    screenshotUrl: 'screenshots/zhironkin.png',
   },
 ]
 

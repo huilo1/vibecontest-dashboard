@@ -6,6 +6,7 @@ import {
   Code2,
   ExternalLink,
   FileText,
+  Images,
   ListFilter,
   Medal,
   PackageCheck,
@@ -120,6 +121,8 @@ const compactName = (name: string) => {
   return `${lastName} ${firstName}`
 }
 
+const publicAsset = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`
+
 function App() {
   const [filter, setFilter] = useState<Filter>('all')
   const [selectedSlug, setSelectedSlug] = useState(evaluations[0].slug)
@@ -146,6 +149,7 @@ function App() {
   const localApks = rows.filter(({ submission }) => submission.apk.status === 'built-local').length
   const installableApks = rows.filter(({ submission }) => isInstallableApk(submission.apk)).length
   const promptDocs = rows.filter(({ submission }) => docStatus(submission.promptDoc.status) === 'ok').length
+  const screenshots = rows.filter(({ submission }) => apkSmokeBySlug[submission.slug]?.screenshotUrl).length
   const averageScore = Math.round(rows.reduce((sum, row) => sum + totalScore(row.evaluation), 0) / rows.length)
   const winnerRows = rows.filter(({ evaluation }) => evaluation.rank <= 3)
   const specialAward = rows.find(({ evaluation }) => evaluation.award === 'Спецприз за инженерию')
@@ -177,6 +181,7 @@ function App() {
           note={`${verifiedApks} прямых, ${archiveApks} архив, ${localApks} локально`}
         />
         <Metric icon={<FileText />} label="Промпты доступны" value={`${promptDocs} из ${rows.length}`} note="GitHub, Drive или inline note" />
+        <Metric icon={<Images />} label="Скриншоты" value={`${screenshots} из ${rows.length}`} note="из APK smoke" />
         <Metric icon={<BarChart3 />} label="Средний балл" value={`${averageScore}`} note="по экспертной матрице" />
       </section>
 
@@ -301,6 +306,7 @@ function SubmissionDetail({ row }: { row: { submission: Submission; evaluation: 
   const { submission, evaluation } = row
   const score = totalScore(evaluation)
   const smoke = apkSmokeBySlug[submission.slug]
+  const screenshotUrl = smoke?.screenshotUrl ? publicAsset(smoke.screenshotUrl) : undefined
 
   return (
     <article className="detail-panel">
@@ -316,87 +322,118 @@ function SubmissionDetail({ row }: { row: { submission: Submission; evaluation: 
         </div>
       </div>
 
-      <div className="score-grid">
-        {rubric.map((item) => (
-          <div className="score-item" key={item.key}>
-            <span>
-              {item.label}
-              <b>
-                {evaluation.scores[item.key]} / {item.max}
-              </b>
-            </span>
-            <div className="score-line" aria-hidden="true">
-              <i style={{ width: `${(evaluation.scores[item.key] / item.max) * 100}%` }} />
+      <div className="detail-body">
+        <div>
+          <div className="score-grid">
+            {rubric.map((item) => (
+              <div className="score-item" key={item.key}>
+                <span>
+                  {item.label}
+                  <b>
+                    {evaluation.scores[item.key]} / {item.max}
+                  </b>
+                </span>
+                <div className="score-line" aria-hidden="true">
+                  <i style={{ width: `${(evaluation.scores[item.key] / item.max) * 100}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="status-grid">
+            <StatusPill tone={apkTone(submission.apk)} icon={<Smartphone size={16} />} label={apkLabel(submission.apk)} value={formatBytes(submission.apk.size)} />
+            <StatusPill tone={smokeTone(smoke)} icon={<Smartphone size={16} />} label="APK smoke" value={smokeLabel(smoke)} />
+            <StatusPill
+              tone={docStatus(submission.promptDoc.status)}
+              icon={<FileText size={16} />}
+              label="Промпты"
+              value={`${submission.promptDoc.status}, ${submission.promptDoc.source}`}
+            />
+            <StatusPill
+              tone={docStatus(submission.architectureDoc.status)}
+              icon={<FileText size={16} />}
+              label="Архитектура"
+              value={`${submission.architectureDoc.status}, ${submission.architectureDoc.source}`}
+            />
+            <StatusPill
+              tone={submission.repo.tests.length > 0 ? 'good' : 'warn'}
+              icon={<TestTube2 size={16} />}
+              label="Тесты"
+              value={submission.repo.tests.length ? `${submission.repo.tests.length} найдено` : 'не найдены'}
+            />
+          </div>
+
+          <div className="detail-columns">
+            <TextList title="Сильные стороны" items={evaluation.strengths} />
+            <TextList title="Риски" items={evaluation.risks} />
+          </div>
+
+          <div className="evidence">
+            <div>
+              <h3>Следующая проверка</h3>
+              <p>{evaluation.nextCheck}</p>
+              {smoke ? <p className="smoke-note">Smoke: {smoke.screen}</p> : null}
+            </div>
+            <div className="repo-facts">
+              <span>{submission.repo.frameworks.join(', ') || 'стек не определён автоматически'}</span>
+              <span>
+                {submission.repo.metrics.codeFiles} code files, {submission.repo.metrics.codeLines.toLocaleString('ru-RU')} LOC
+              </span>
+              <span>{submission.repo.docs.length} docs, {submission.repo.prompts.length} prompt files</span>
+              <span>commit {submission.repo.metrics.repoLastCommit ? new Date(submission.repo.metrics.repoLastCommit).toLocaleDateString('ru-RU') : 'n/a'}</span>
             </div>
           </div>
-        ))}
-      </div>
 
-      <div className="status-grid">
-        <StatusPill tone={apkTone(submission.apk)} icon={<Smartphone size={16} />} label={apkLabel(submission.apk)} value={formatBytes(submission.apk.size)} />
-        <StatusPill tone={smokeTone(smoke)} icon={<Smartphone size={16} />} label="APK smoke" value={smokeLabel(smoke)} />
-        <StatusPill
-          tone={docStatus(submission.promptDoc.status)}
-          icon={<FileText size={16} />}
-          label="Промпты"
-          value={`${submission.promptDoc.status}, ${submission.promptDoc.source}`}
-        />
-        <StatusPill
-          tone={docStatus(submission.architectureDoc.status)}
-          icon={<FileText size={16} />}
-          label="Архитектура"
-          value={`${submission.architectureDoc.status}, ${submission.architectureDoc.source}`}
-        />
-        <StatusPill
-          tone={submission.repo.tests.length > 0 ? 'good' : 'warn'}
-          icon={<TestTube2 size={16} />}
-          label="Тесты"
-          value={submission.repo.tests.length ? `${submission.repo.tests.length} найдено` : 'не найдены'}
-        />
-      </div>
-
-      <div className="detail-columns">
-        <TextList title="Сильные стороны" items={evaluation.strengths} />
-        <TextList title="Риски" items={evaluation.risks} />
-      </div>
-
-      <div className="evidence">
-        <div>
-          <h3>Следующая проверка</h3>
-          <p>{evaluation.nextCheck}</p>
-          {smoke ? <p className="smoke-note">Smoke: {smoke.screen}</p> : null}
+          <div className="links">
+            <a href={submission.repoUrl} target="_blank" rel="noreferrer">
+              <Code2 size={16} />
+              GitHub
+            </a>
+            <a href={submission.apkUrl} target="_blank" rel="noreferrer">
+              <Smartphone size={16} />
+              APK
+            </a>
+            {submission.apk.artifactUrl ? (
+              <a href={submission.apk.artifactUrl} target="_blank" rel="noreferrer">
+                <PackageCheck size={16} />
+                Собранный APK
+              </a>
+            ) : null}
+            <a href={submission.promptsUrl} target="_blank" rel="noreferrer">
+              <FileText size={16} />
+              Промпты
+            </a>
+            <a href={submission.architectureUrl} target="_blank" rel="noreferrer">
+              <FileText size={16} />
+              Архитектура
+            </a>
+          </div>
         </div>
-        <div className="repo-facts">
-          <span>{submission.repo.frameworks.join(', ') || 'стек не определён автоматически'}</span>
-          <span>{submission.repo.metrics.codeFiles} code files, {submission.repo.metrics.codeLines.toLocaleString('ru-RU')} LOC</span>
-          <span>{submission.repo.docs.length} docs, {submission.repo.prompts.length} prompt files</span>
-          <span>commit {submission.repo.metrics.repoLastCommit ? new Date(submission.repo.metrics.repoLastCommit).toLocaleDateString('ru-RU') : 'n/a'}</span>
-        </div>
-      </div>
 
-      <div className="links">
-        <a href={submission.repoUrl} target="_blank" rel="noreferrer">
-          <Code2 size={16} />
-          GitHub
-        </a>
-        <a href={submission.apkUrl} target="_blank" rel="noreferrer">
-          <Smartphone size={16} />
-          APK
-        </a>
-        {submission.apk.artifactUrl ? (
-          <a href={submission.apk.artifactUrl} target="_blank" rel="noreferrer">
-            <PackageCheck size={16} />
-            Собранный APK
-          </a>
-        ) : null}
-        <a href={submission.promptsUrl} target="_blank" rel="noreferrer">
-          <FileText size={16} />
-          Промпты
-        </a>
-        <a href={submission.architectureUrl} target="_blank" rel="noreferrer">
-          <FileText size={16} />
-          Архитектура
-        </a>
+        {screenshotUrl ? (
+          <figure className="screenshot-card">
+            <div className="screenshot-title">
+              <Images size={16} />
+              <span>Скрин APK</span>
+            </div>
+            <a className="phone-frame" href={screenshotUrl} target="_blank" rel="noreferrer" aria-label={`Открыть скриншот ${submission.name}`}>
+              <img src={screenshotUrl} alt={`Скриншот APK: ${submission.name}`} loading="lazy" />
+            </a>
+            <figcaption>{smoke?.screen}</figcaption>
+            <a className="screenshot-open" href={screenshotUrl} target="_blank" rel="noreferrer">
+              Полный PNG
+              <ExternalLink size={14} />
+            </a>
+          </figure>
+        ) : (
+          <div className="screenshot-card empty">
+            <div className="screenshot-title">
+              <Images size={16} />
+              <span>Скрин APK</span>
+            </div>
+            <p>Скриншот для этой работы пока не добавлен.</p>
+          </div>
+        )}
       </div>
     </article>
   )
