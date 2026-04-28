@@ -51,6 +51,12 @@ export const apkSmokeResults: ApkSmokeResult[] = [
     evidence: '.cache/emulator/кулаков-вадим-евгеньевич.com.archvnx.bbplayapp.png',
   },
   {
+    slug: 'гуреев-егор-алексеевич',
+    status: 'pass',
+    screen: 'Логин и demo dashboard с балансом, клубами и нижней навигацией.',
+    evidence: '.cache/emulator/gureev-demo-28s.png',
+  },
+  {
     slug: 'глинкин-александр-михайлович',
     status: 'pass',
     screen: 'Логин; на экране видны тестовые аккаунты.',

@@ -18,6 +18,33 @@ const dirs = {
   srcData: join(root, 'src', 'data'),
 };
 
+const localApkOverrides = {
+  'черкасов-кирилл-константинович': {
+    status: 'built-local',
+    source: 'local-source-build',
+    size: 69649720,
+    localPath: '.cache/apks/черкасов-кирилл-константинович-built-release.apk',
+    artifactUrl:
+      'https://github.com/huilo1/vibecontest-dashboard/releases/download/local-apk-builds-2026-04-27/chirkasov-kirill-built-release.apk',
+    hasManifest: true,
+    buildType: 'Expo/React Native release APK signed with debug keystore',
+    note:
+      'Участник APK не предоставил: проект зависит от dev-сервисов и VK token. Для ревью APK собран локально из исходников в mock-режиме.',
+  },
+  'харин-иван-александрович': {
+    status: 'built-local',
+    source: 'local-source-build',
+    size: 158129755,
+    localPath: '.cache/apks/харин-иван-александрович-built-debug.apk',
+    artifactUrl:
+      'https://github.com/huilo1/vibecontest-dashboard/releases/download/local-apk-builds-2026-04-27/kharin-ivan-built-debug.apk',
+    hasManifest: true,
+    buildType: 'Flutter debug APK after generating android/ with flutter create',
+    note:
+      'Участник APK не приложил, но README описывает генерацию платформы. Для ревью Android-папка сгенерирована локально, APK собран с VIBE_API_BASE_URL=http://10.0.2.2:8080.',
+  },
+};
+
 for (const dir of Object.values(dirs)) {
   mkdirSync(dir, { recursive: true });
 }
@@ -26,6 +53,7 @@ const exec = (cmd, args, options = {}) =>
   execFileSync(cmd, args, {
     cwd: root,
     encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
     stdio: ['ignore', 'pipe', 'pipe'],
     ...options,
   });
@@ -122,6 +150,14 @@ const parseGithubRepo = (url) => {
   };
 };
 
+const firstGithubRepoFromLinks = (links) => {
+  for (const link of links) {
+    const repo = parseGithubRepo(link ?? '');
+    if (repo) return repo;
+  }
+  return null;
+};
+
 const parseGithubBlob = (url) => {
   const match = url.match(/github\.com\/([^/\s]+)\/([^/\s]+)\/blob\/([^/\s]+)\/(.+)$/i);
   if (!match) return null;
@@ -158,17 +194,25 @@ const readMaybe = (path) => {
   }
 };
 
+const skippedDirectories = new Set([
+  '.git',
+  'node_modules',
+  'dist',
+  'build',
+  'target',
+  '.gradle',
+  '.idea',
+  '.expo',
+  '.cxx',
+  '.dart_tool',
+  'coverage',
+]);
+
+const isSkippedPath = (path) => path.split(/[\\/]/).some((part) => skippedDirectories.has(part));
+
 const walkFiles = (baseDir, dir = baseDir, output = []) => {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (
-      entry.name === '.git' ||
-      entry.name === 'node_modules' ||
-      entry.name === 'dist' ||
-      entry.name === 'build' ||
-      entry.name === '.gradle' ||
-      entry.name === '.idea' ||
-      entry.name === '.expo'
-    ) {
+    if (skippedDirectories.has(entry.name)) {
       continue;
     }
 
@@ -223,7 +267,14 @@ const summarizeRepo = (repoDir, repo) => {
     };
   }
 
-  const files = walkFiles(repoDir).sort();
+  const listed = safeExec('git', ['-c', 'core.quotePath=false', '-C', repoDir, 'ls-files']);
+  const tracked = listed.ok
+    ? listed.stdout
+        .split(/\r?\n/)
+        .filter(Boolean)
+        .filter((file) => !isSkippedPath(file))
+    : [];
+  const files = (tracked.length ? tracked : walkFiles(repoDir)).sort();
   const frameworks = new Set();
   const docs = files.filter((file) =>
     /(readme|architecture|presentation|development|production|overview|заметки|zametki)/i.test(basename(file)),
@@ -647,7 +698,11 @@ const main = async () => {
   for (const row of parsed) {
     const name = row[rowKeys.name]?.trim();
     if (!name) continue;
-    const github = parseGithubRepo(row[rowKeys.repoUrl]?.trim() ?? '');
+    const rawRepoUrl = row[rowKeys.repoUrl]?.trim() ?? '';
+    const promptsLink = row[rowKeys.promptsUrl]?.trim() ?? '';
+    const architectureLink = row[rowKeys.architectureUrl]?.trim() ?? '';
+    const rawApkUrl = row[rowKeys.apkUrl]?.trim() ?? '';
+    const github = firstGithubRepoFromLinks([rawRepoUrl, promptsLink, architectureLink, rawApkUrl]);
     const slug = slugify(name);
     const repoDir = github ? join(dirs.repos, `${github.owner}__${github.repo}`) : '';
 
@@ -659,9 +714,7 @@ const main = async () => {
     }
 
     const repoSummary = github ? summarizeRepo(repoDir, github) : summarizeRepo('', null);
-    const promptsLink = row[rowKeys.promptsUrl]?.trim() ?? '';
-    const architectureLink = row[rowKeys.architectureUrl]?.trim() ?? '';
-    const [promptDoc, architectureDoc, apk] = await Promise.all([
+    const [promptDoc, architectureDoc, resolvedApk] = await Promise.all([
       resolveLinkedText(promptsLink, repoDir),
       resolveLinkedText(architectureLink, repoDir),
       resolveApk(
@@ -672,14 +725,15 @@ const main = async () => {
         repoDir,
       ),
     ]);
+    const apk = localApkOverrides[slug] ?? resolvedApk;
 
     submissions.push({
       slug,
       name,
       timestamp: row[rowKeys.timestamp]?.trim() ?? '',
       vk: row[rowKeys.vk]?.trim() ?? '',
-      repoUrl: row[rowKeys.repoUrl]?.trim() ?? '',
-      apkUrl: row[rowKeys.apkUrl]?.trim() ?? '',
+      repoUrl: github?.webUrl ?? rawRepoUrl,
+      apkUrl: rawApkUrl,
       promptsUrl: promptsLink,
       architectureUrl: architectureLink,
       github,

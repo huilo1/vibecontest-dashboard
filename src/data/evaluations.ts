@@ -77,7 +77,7 @@ export const evaluations: Evaluation[] = [
   },
   {
     slug: 'инжутов-дмитрий-сергеевич',
-    rank: 10,
+    rank: 11,
     scores: { product: 24, prompts: 17, engineering: 18, delivery: 7 },
     summary:
       'Хорошо упакованный Flutter-проект по документам, но release APK на текущем эмуляторе не проходит runtime smoke: после 60 секунд остается splash screen.',
@@ -185,6 +185,25 @@ export const evaluations: Evaluation[] = [
     nextCheck: 'Установить проверенный Drive APK и перенести README/architecture/prompts в репозиторий для устойчивого ревью.',
   },
   {
+    slug: 'гуреев-егор-алексеевич',
+    rank: 8,
+    scores: { product: 29, prompts: 15, engineering: 15, delivery: 14 },
+    summary:
+      'Компактная React/Vite + Capacitor работа с прямым APK, README, ARCHITECTURE, BUILD_APK и demo-mode. APK ставится на эмулятор, доходит до логина и после demo-login показывает основной dashboard с клубами, балансом и навигацией.',
+    strengths: [
+      'APK лежит прямо в GitHub-репозитории, скачивается как raw asset и проходит ZIP/APK-проверку.',
+      'Runtime smoke успешный: login screen и основной demo dashboard отрисовываются на Android API 35.',
+      'Документация закрывает стек PWA/Capacitor, Supabase, Zustand, Claude fallback и инструкции сборки APK.',
+      'Покрыты основные экраны: авторизация, dashboard, бронь, баланс, новости, чат и профиль.',
+    ],
+    risks: [
+      'Автотесты не найдены; Android test stubs выглядят шаблонными.',
+      'Значимая часть сценариев работает через demo/localStorage fallback, поэтому реальные Supabase/Claude интеграции требуют отдельной проверки env-ключей.',
+      'По глубине backend/инженерии и истории промптов работа слабее лидеров и сильных mid-tier заявок.',
+    ],
+    nextCheck: 'Вручную пройти бронь, баланс, новости и чат после demo-login; отдельно проверить поведение с реальными Supabase/Claude ключами.',
+  },
+  {
     slug: 'харин-иван-александрович',
     rank: 9,
     scores: { product: 25, prompts: 16, engineering: 17, delivery: 10 },
@@ -205,7 +224,7 @@ export const evaluations: Evaluation[] = [
   },
   {
     slug: 'глинкин-александр-михайлович',
-    rank: 8,
+    rank: 10,
     scores: { product: 26, prompts: 15, engineering: 13, delivery: 13 },
     summary:
       'Понятная Flutter-заявка с README, ARCHITECTURE, PROMPTS и проверяемым APK из Google Drive.',
@@ -223,7 +242,7 @@ export const evaluations: Evaluation[] = [
   },
   {
     slug: 'жиронкин-василий-михайлович',
-    rank: 11,
+    rank: 12,
     scores: { product: 27, prompts: 7, engineering: 12, delivery: 12 },
     summary:
       'APK из Expo доступен и проверяется, но документы Google закрыты, а в репозитории не найдено README/architecture/prompts/test evidence.',

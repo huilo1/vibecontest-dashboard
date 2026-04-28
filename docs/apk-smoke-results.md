@@ -1,6 +1,6 @@
 # APK smoke results
 
-Date: 2026-04-27
+Date: 2026-04-27, updated 2026-04-28
 Device: Android API 35 x86_64 emulator, Docker/KVM, headless mode
 Scope: install APK, launch main activity, wait 20-35 seconds, capture screenshot and clean logcat. This is not a full authenticated product review.
 
@@ -13,6 +13,7 @@ Scope: install APK, launch main activity, wait 20-35 seconds, capture screenshot
 | Ломакин Максим | Pass | Login screen; nested `BBPlay.apk` was extracted from the Drive archive | `.cache/emulator/ломакин-максим-андреевич.com.example.bbplay_app.png` |
 | Бирюков Владислав | Pass after retry | Login screen after isolated manual relaunch; first batch caught an emulator System UI ANR dialog | `.cache/emulator/biryukov-manual-30s.png` |
 | Кулаков Вадим | Pass | Login screen | `.cache/emulator/кулаков-вадим-евгеньевич.com.archvnx.bbplayapp.png` |
+| Гуреев Егор | Pass | Login screen, then demo dashboard with balance, club cards and bottom navigation | `.cache/emulator/gureev-demo-28s.png` |
 | Глинкин Александр | Pass | Login screen with test accounts visible | `.cache/emulator/глинкин-александр-михайлович.com.example.bb_play.png` |
 | Инжутов Дмитрий | Fail | Still on splash screen after 60 seconds | `logcat`: Flutter/JNI `ClassNotFoundException` for `io/flutter/util/PathUtils` |
 | Харин Иван | Pass, locally built | Flutter debug APK built after `flutter create --platforms=android .` reaches login screen with QA accounts | `.cache/emulator/харин-иван-александрович-built-debug.com.example.blackbears_strike.png` |
@@ -27,3 +28,4 @@ Scope: install APK, launch main activity, wait 20-35 seconds, capture screenshot
 - Харин's original submission did not include APK or Android platform folder. `flutter create --platforms=android .` plus `flutter build apk --debug --dart-define=VIBE_API_BASE_URL=http://10.0.2.2:8080` produced an installable APK.
 - Public download links for locally built APKs are published as GitHub Release assets: <https://github.com/huilo1/vibecontest-dashboard/releases/tag/local-apk-builds-2026-04-27>.
 - During the two new smoke runs the emulator showed a System UI ANR dialog after long installs, but both apps were visibly rendered behind the dialog and app logs did not show fatal crashes.
+- Гуреев's first launch screenshot also caught the emulator System UI ANR, but an isolated relaunch reached login and demo dashboard without a fatal app crash.
